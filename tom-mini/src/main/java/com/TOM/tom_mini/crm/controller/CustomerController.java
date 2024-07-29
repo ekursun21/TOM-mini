@@ -1,5 +1,6 @@
 package com.TOM.tom_mini.crm.controller;
 
+import com.TOM.tom_mini.crm.dto.CustomerRegistrationDTO;
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class CustomerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> registerCustomer(@RequestBody CustomerRegistrationDTO registerDto) {
         try {
-            Customer savedCustomer = customerService.registerCustomer(customer);
+            Customer savedCustomer = customerService.registerCustomer(registerDto);
             return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();  // Print stack trace for debugging
