@@ -41,8 +41,11 @@ public class CustomerService {
         for (Address address : registrationDTO.getAddresses()) {
             addressRepository.save(address);
 
-            CustomerAddress customerAddress = new CustomerAddress(new CustomerAddressId(customer.getId(), address.getId()), customer, address);
+            CustomerAddress customerAddress = new CustomerAddress(new CustomerAddressId(customer.getId(),
+                    address.getId()), customer, address);
             customerAddressRepository.save(customerAddress);
+
+            //customer.getCustomerAddresses().add(customerAddress);
         }
 
         return customer;

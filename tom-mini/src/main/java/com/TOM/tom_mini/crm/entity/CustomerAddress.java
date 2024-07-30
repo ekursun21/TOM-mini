@@ -3,10 +3,8 @@ package com.TOM.tom_mini.crm.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "customeraddress")
+@Table(name = "customer_address")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +23,5 @@ public class CustomerAddress {
     private Address address;
 
 
-    // Additional fields can be added here
 }
 
