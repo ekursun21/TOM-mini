@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 @Getter
 @Setter
@@ -29,7 +28,7 @@ public class CustomerRegistrationDTO {
         customer.setEmail(this.email);
         customer.setBirthday(this.birthday);
         customer.setCreatedAt(this.createdAt);
-        // You might want to set other properties or handle related entities like addresses here
+
         return customer;
     }
 }

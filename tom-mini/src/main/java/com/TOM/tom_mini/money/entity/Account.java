@@ -1,12 +1,14 @@
 package com.TOM.tom_mini.money.entity;
 
 import com.TOM.tom_mini.crm.entity.Customer;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -31,4 +33,15 @@ public class Account {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Transaction> transactions;
+
+    public void credit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+
+    public void debit(BigDecimal amount) {
+        this.balance = this.balance.subtract(amount);
+    }
 }
