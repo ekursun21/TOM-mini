@@ -30,9 +30,14 @@ public class Transaction {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_no")
+    @JoinColumn(name = "from_account_no")
     @JsonBackReference
-    private Account account;
+    private Account fromAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_account_no")
+    @JsonBackReference
+    private Account toAccount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")

@@ -15,7 +15,8 @@ import org.hibernate.resource.transaction.spi.TransactionStatus;
 @AllArgsConstructor
 public class TransactionDTO {
 
-    private String accountNo;
+    private String fromAccountNo;
+    private String toAccountNo;
     private TransactionType transactionType;
     private BigDecimal amount;
     private String description;

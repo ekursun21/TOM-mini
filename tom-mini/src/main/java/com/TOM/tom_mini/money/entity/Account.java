@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "accounts")
@@ -33,9 +34,11 @@ public class Account {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Transaction> transactions;
+    @OneToMany(mappedBy = "fromAccount")
+    private Set<Transaction> outgoingTransactions;
+
+    @OneToMany(mappedBy = "toAccount")
+    private Set<Transaction> incomingTransactions;
 
     public void credit(BigDecimal amount) {
         this.balance = this.balance.add(amount);
