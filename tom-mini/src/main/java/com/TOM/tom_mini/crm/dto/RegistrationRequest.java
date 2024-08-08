@@ -2,14 +2,17 @@ package com.TOM.tom_mini.crm.dto;
 
 import com.TOM.tom_mini.crm.entity.Address;
 import com.TOM.tom_mini.crm.entity.Customer;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 @Getter
 @Setter
-public class CustomerRegistrationDTO {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RegistrationRequest {
     private String name;
     private String surname;
     private String password;

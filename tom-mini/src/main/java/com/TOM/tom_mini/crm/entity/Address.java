@@ -25,7 +25,7 @@ public class Address {
     private String city;
     private String state;
     private String postalCode;
-    private int countryId; // Consider changing to `Long` if it refers to a `Country` entity
+    private int countryId;
     private String building;
     private String addressLine;
 

@@ -1,10 +1,7 @@
 package com.TOM.tom_mini.crm.service;
 
-import com.TOM.tom_mini.crm.dto.CustomerRegistrationDTO;
-import com.TOM.tom_mini.crm.entity.Address;
-import com.TOM.tom_mini.crm.entity.Customer;
-import com.TOM.tom_mini.crm.entity.CustomerAddress;
-import com.TOM.tom_mini.crm.entity.CustomerAddressId;
+import com.TOM.tom_mini.crm.dto.RegistrationRequest;
+import com.TOM.tom_mini.crm.entity.*;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerAddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
@@ -33,9 +30,11 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer registerCustomer(CustomerRegistrationDTO registrationDTO) {
+    public Customer registerCustomer(RegistrationRequest registrationDTO) {
         Customer customer = registrationDTO.toCustomer();
         customer.setCreatedAt(LocalDate.now());
+        customer.setModifiedAt(LocalDate.now());
+        customer.setRole(Role.CUSTOMER);
         customer = customerRepository.save(customer);
 
         for (Address address : registrationDTO.getAddresses()) {

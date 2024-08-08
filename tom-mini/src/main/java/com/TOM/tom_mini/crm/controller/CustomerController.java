@@ -1,6 +1,6 @@
 package com.TOM.tom_mini.crm.controller;
 
-import com.TOM.tom_mini.crm.dto.CustomerRegistrationDTO;
+import com.TOM.tom_mini.crm.dto.RegistrationRequest;
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/api/customer/v1")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -24,7 +24,7 @@ public class CustomerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Customer> registerCustomer(@RequestBody CustomerRegistrationDTO registerDto) {
+    public ResponseEntity<Customer> registerCustomer(@RequestBody RegistrationRequest registerDto) {
         try {
             Customer savedCustomer = customerService.registerCustomer(registerDto);
             return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
