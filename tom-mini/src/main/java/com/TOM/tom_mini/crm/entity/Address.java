@@ -1,13 +1,12 @@
 package com.TOM.tom_mini.crm.entity;
 
+import com.TOM.tom_mini.crm.other.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "address")
@@ -16,16 +15,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Address {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private Long id = IdGenerator.generate();
 
     private String streetAddress;
     private String city;
     private String state;
     private String postalCode;
-    private int countryId; // Consider changing to `Long` if it refers to a `Country` entity
+    private int countryId;
     private String building;
     private String addressLine;
 

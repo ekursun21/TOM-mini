@@ -13,7 +13,7 @@ public class TomMiniApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TomMiniApplication.class, args);
-		logger.info("Tom Mini Application Started");
+		logger.info("Hey Tom Mini Application Started");
 	}
 
 	@EventListener(ApplicationReadyEvent.class)

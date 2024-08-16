@@ -1,5 +1,8 @@
 package com.TOM.tom_mini.crm.service;
 
+import com.TOM.tom_mini.crm.other.CustomerAddressId;
+import com.TOM.tom_mini.crm.other.IdGenerator;
+import com.TOM.tom_mini.crm.other.Role;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.*;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
@@ -37,13 +40,14 @@ public class CustomerService {
         log.info("Registering customer with email: {}", request.getEmail());
 
         Customer customer = Customer.builder()
+                .id(IdGenerator.generate())
                 .name(request.getName())
                 .surname(request.getSurname())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .birthday(request.getBirthday())
                 .email(request.getEmail())
-                .role(Role.valueOf("USER"))  // Use a singleton set to initialize roles
+                .role(Role.valueOf("USER"))
                 .createdAt(LocalDate.now())
                 .modifiedAt(LocalDate.now())
                 .build();
@@ -69,14 +73,17 @@ public class CustomerService {
     }
 
     public List<Customer> getAllCustomers() {
+        log.info("Fetching all customers from the database");
         return customerRepository.findAll();
     }
 
-    public Optional<Customer> getCustomerById(UUID id) {
+    public Optional<Customer> getCustomerById(Long id) {
+        log.info("Fetching customer with ID: {}", id);
         return customerRepository.findById(id);
     }
 
     public Optional<Customer> getCustomerByEmail(String email) {
+        log.info("Fetching customer with Email: {}", email);
         return customerRepository.findByEmail(email);
     }
 }

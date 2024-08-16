@@ -1,6 +1,5 @@
-package com.TOM.tom_mini.AuthenticationTest;
+package com.TOM.tom_mini.crm;
 
-import com.TOM.tom_mini.AuthenticationTest.TestSecurityConfig;
 import com.TOM.tom_mini.crm.controller.CustomerController;
 import com.TOM.tom_mini.crm.service.CustomerService;
 import com.TOM.tom_mini.money.controller.AccountController;

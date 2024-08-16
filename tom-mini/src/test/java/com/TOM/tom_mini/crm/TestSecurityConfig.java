@@ -1,4 +1,4 @@
-package com.TOM.tom_mini.AuthenticationTest;
+package com.TOM.tom_mini.crm;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

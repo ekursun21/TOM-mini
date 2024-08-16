@@ -1,4 +1,4 @@
-package com.TOM.tom_mini.crm.entity;
+package com.TOM.tom_mini.crm.other;
 
 import org.springframework.security.core.GrantedAuthority;
 

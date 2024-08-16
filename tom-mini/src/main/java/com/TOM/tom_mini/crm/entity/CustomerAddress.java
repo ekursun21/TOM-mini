@@ -1,5 +1,6 @@
 package com.TOM.tom_mini.crm.entity;
 
+import com.TOM.tom_mini.crm.other.CustomerAddressId;
 import jakarta.persistence.*;
 import lombok.*;
 

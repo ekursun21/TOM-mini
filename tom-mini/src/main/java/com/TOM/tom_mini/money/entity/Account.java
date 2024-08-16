@@ -1,25 +1,25 @@
 package com.TOM.tom_mini.money.entity;
 
 import com.TOM.tom_mini.crm.entity.Customer;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 @Entity
+@Builder
 @Table(name = "accounts")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
     @Column(name = "account_no")
-    private String accountNo;
+    private Long accountNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)

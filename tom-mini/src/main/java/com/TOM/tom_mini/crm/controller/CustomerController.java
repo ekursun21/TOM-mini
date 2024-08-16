@@ -14,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/customer")
-@Api(value = "Customer Managment System")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -29,61 +27,69 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    //Testing
+    //Test
     @GetMapping("/public")
-    @ApiOperation(value = "public test")
-    public String sayHello(){
+    public String sayHello() {
+        log.info("Public endpoint accessed: sayHello");
         return "Hello World";
     }
 
     @GetMapping("/private")
-    @ApiOperation(value = "User private test")
-    public String sayPrivateHello(){
+    public String sayPrivateHello() {
+        log.info("Private endpoint accessed: sayPrivateHello");
         return "Private zone";
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Admin private test")
-    public String sayAdminHello(){
+    public String sayAdminHello() {
+        log.info("Admin endpoint accessed: sayAdminHello");
         return "Admin zone";
     }
 
     //Public
     @PostMapping("/public/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
-        log.info("Received customer registration request");
+        log.info("Received customer registration request: {}", request);
         try {
-             Customer savedCustomer = customerService.registerCustomer(request);
+            Customer savedCustomer = customerService.registerCustomer(request);
+            log.info("Successfully registered customer: {}", savedCustomer);
             return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
         } catch (Exception e) {
-            e.printStackTrace();  // Print stack trace for debugging
+            log.error("Error registering customer: ", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    //Customer Endpoints
-
-    //Admin Endpoints
-    @ApiOperation(value = "Get customer by ID")
+    //Admin
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable UUID id) {
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
+        log.info("Fetching customer with ID: {}", id);
         try {
             Optional<Customer> customer = customerService.getCustomerById(id);
-            return customer.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            if (customer.isPresent()) {
+                log.info("Customer found: {}", customer.get());
+                return new ResponseEntity<>(customer.get(), HttpStatus.OK);
+            } else {
+                log.warn("Customer with ID: {} not found", id);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
-            e.printStackTrace();  // Print stack trace for debugging
+            log.error("Error fetching customer by ID: ", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @ApiOperation(value = "Get all customers")
     @GetMapping("/all")
     public ResponseEntity<List<Customer>> getAllCustomers() {
+        log.info("Fetching all customers");
         try {
             List<Customer> customers = customerService.getAllCustomers();
+            log.info("Found {} customers", customers.size());
             return new ResponseEntity<>(customers, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_
+            log.error("Error fetching all customers: ", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}

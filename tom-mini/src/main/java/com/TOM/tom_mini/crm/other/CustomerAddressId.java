@@ -1,4 +1,4 @@
-package com.TOM.tom_mini.crm.entity;
+package com.TOM.tom_mini.crm.other;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 @Embeddable
 @Getter
@@ -15,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerAddressId implements Serializable {
-    private UUID customerId;
-    private UUID addressId;
+    private Long customerId;
+    private Long addressId;
 }
 

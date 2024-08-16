@@ -1,8 +1,9 @@
-package com.TOM.tom_mini.service;
+package com.TOM.tom_mini.crm;
 
+import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.Customer;
-import com.TOM.tom_mini.crm.entity.Role;
+import com.TOM.tom_mini.crm.other.Role;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerAddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,7 +58,7 @@ class CustomerServiceTest {
         request.setAddresses(Collections.emptyList());
 
         Customer savedCustomer = Customer.builder()
-                .id(UUID.randomUUID())
+                .id(IdGenerator.generate())
                 .name(request.getName())
                 .surname(request.getSurname())
                 .password("encodedPassword")

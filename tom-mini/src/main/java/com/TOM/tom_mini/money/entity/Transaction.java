@@ -1,33 +1,28 @@
 package com.TOM.tom_mini.money.entity;
 
+import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "transactions")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Transaction {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private Long id = IdGenerator.generate();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_account_no")
@@ -50,6 +45,6 @@ public class Transaction {
     private String description;
 
     @Column(name = "transaction_date", nullable=false)
-    private LocalDateTime transactionTime;
+    private LocalDate transactionTime;
 }
 
