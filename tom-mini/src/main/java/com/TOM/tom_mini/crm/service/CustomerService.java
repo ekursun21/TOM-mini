@@ -1,5 +1,6 @@
 package com.TOM.tom_mini.crm.service;
 
+import com.TOM.tom_mini.crm.exception.CustomerAlreadyExistsException;
 import com.TOM.tom_mini.crm.other.CustomerAddressId;
 import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.crm.other.Role;
@@ -8,6 +9,7 @@ import com.TOM.tom_mini.crm.entity.*;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerAddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
+import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,12 @@ public class CustomerService {
 
     @Transactional
     public Customer registerCustomer(CustomerRegistrationRequest request) {
+        String email = request.getEmail();
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(email);
+        if (existingCustomer.isPresent()) {
+            throw new CustomerAlreadyExistsException("Customer with email " + email + " already exists.");
+        }
+
         log.info("Registering customer with email: {}", request.getEmail());
 
         Customer customer = Customer.builder()
@@ -46,7 +54,7 @@ public class CustomerService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .birthday(request.getBirthday())
-                .email(request.getEmail())
+                .email(email)
                 .role(Role.valueOf("USER"))
                 .createdAt(LocalDate.now())
                 .modifiedAt(LocalDate.now())
@@ -86,4 +94,18 @@ public class CustomerService {
         log.info("Fetching customer with Email: {}", email);
         return customerRepository.findByEmail(email);
     }
+
+    private CustomerInfoResponse mapToCustomerInfoResponse(Customer customer) {
+        return CustomerInfoResponse.builder()
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .role(customer.getRole().toString()) // Assuming role is an Enum
+                .birthday(customer.getBirthday())
+                .created_at(customer.getCreatedAt())
+                .updated_at(customer.getModifiedAt())
+                .build();
+    }
+
 }

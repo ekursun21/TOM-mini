@@ -27,7 +27,7 @@
     </root>
 
     <!-- Logger for your application's custom logs, directed to both console and file -->
-    <logger name="com.TOM.tom_mini.crm" level="INFO" additivity="false">
+    <logger name="com.TOM.tom_mini.crm" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>

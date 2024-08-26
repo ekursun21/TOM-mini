@@ -1,9 +1,8 @@
 package com.TOM.tom_mini.money.service;
 
-import com.TOM.tom_mini.crm.repository.CustomerRepository;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.*;
-import com.TOM.tom_mini.money.exception.AccountNotFoundException;
+import com.TOM.tom_mini.money.mapper.TransactionMapper;
 import com.TOM.tom_mini.money.repository.AccountRepository;
 import com.TOM.tom_mini.money.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,14 +20,14 @@ public class MoneyService {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private final CustomerRepository customerRepository;
+    private final FeeService feeService;
 
     @Autowired
     public MoneyService(TransactionRepository transactionRepository, AccountRepository accountRepository,
-                        CustomerRepository customerRepository) {
+                         FeeService feeService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
-        this.customerRepository = customerRepository;
+        this.feeService = feeService;
     }
 
     @Transactional
@@ -51,19 +49,21 @@ public class MoneyService {
                     });
         }
 
-        Transaction transaction = new Transaction();
+        Transaction transaction = TransactionMapper.INSTANCE.toTransaction(transactionDTO);
         transaction.setFromAccount(fromAccount);
         transaction.setToAccount(toAccount);
-        transaction.setAmount(transactionDTO.getAmount());
-        transaction.setTransactionType(transactionDTO.getTransactionType());
         transaction.setTransactionTime(LocalDate.now());
-        transaction.setDescription(transactionDTO.getDescription());
 
         log.debug("Created transaction object: {}", transaction);
 
+        String accountType = fromAccount.getAccountType();
+
         BigDecimal transactionAmount = transactionDTO.getAmount();
         if (transactionDTO.getTransactionType() == TransactionType.TRANSFER) {
-            BigDecimal fee = BigDecimal.valueOf(4.00);
+            BigDecimal fee = transactionAmount.compareTo(BigDecimal.valueOf(10000)) > 0
+                    ? feeService.getFee("HIGH_VALUE", accountType)
+                    : feeService.getFee("LOW_VALUE", accountType);
+
             BigDecimal totalAmount = transactionAmount.add(fee);
 
             if (fromAccount.getBalance().compareTo(totalAmount) < 0) {

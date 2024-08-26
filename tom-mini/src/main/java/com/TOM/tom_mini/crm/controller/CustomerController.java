@@ -2,9 +2,9 @@ package com.TOM.tom_mini.crm.controller;
 
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.Customer;
+import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import com.TOM.tom_mini.crm.service.CustomerService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,12 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, CustomerMapper customerMapper) {
         this.customerService = customerService;
+        this.customerMapper = customerMapper;
     }
 
     //Test
@@ -41,7 +43,7 @@ public class CustomerController {
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public String sayAdminHello() {
         log.info("Admin endpoint accessed: sayAdminHello");
         return "Admin zone";
@@ -49,27 +51,27 @@ public class CustomerController {
 
     //Public
     @PostMapping("/public/register")
-    public ResponseEntity<Customer> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
+    public ResponseEntity<CustomerInfoResponse> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
         log.info("Received customer registration request: {}", request);
-        try {
-            Customer savedCustomer = customerService.registerCustomer(request);
-            log.info("Successfully registered customer: {}", savedCustomer);
-            return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Error registering customer: ", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        Customer savedCustomer = customerService.registerCustomer(request);
+        CustomerInfoResponse customerInfoResponse = customerMapper.mapToCustomerInfoResponse(savedCustomer);
+
+        log.info("Successfully registered customer: {}", savedCustomer);
+
+        return new ResponseEntity<>(customerInfoResponse, HttpStatus.CREATED);
     }
+
 
     //Admin
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
+    public ResponseEntity<CustomerInfoResponse> getCustomerById(@PathVariable Long id) {
         log.info("Fetching customer with ID: {}", id);
         try {
             Optional<Customer> customer = customerService.getCustomerById(id);
             if (customer.isPresent()) {
                 log.info("Customer found: {}", customer.get());
-                return new ResponseEntity<>(customer.get(), HttpStatus.OK);
+                return new ResponseEntity<>(customerMapper.mapToCustomerInfoResponse(customer.get()), HttpStatus.OK);
             } else {
                 log.warn("Customer with ID: {} not found", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -81,6 +83,7 @@ public class CustomerController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         log.info("Fetching all customers");
         try {

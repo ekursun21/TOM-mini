@@ -1,0 +1,18 @@
+2024-08-23 15:23:02 [http-nio-8080-exec-5] INFO  c.T.t.c.c.CustomerController - Received customer registration request: com.TOM.tom_mini.crm.request.CustomerRegistrationRequest@42f119c3
+2024-08-23 15:23:03 [http-nio-8080-exec-5] INFO  c.T.t.crm.service.CustomerService - Registering customer with email: guy2@gmail.com
+2024-08-23 15:23:03 [http-nio-8080-exec-5] DEBUG c.T.t.crm.service.CustomerService - Customer registration details: com.TOM.tom_mini.crm.request.CustomerRegistrationRequest@42f119c3
+2024-08-23 15:23:03 [http-nio-8080-exec-5] INFO  c.T.t.c.c.CustomerController - Successfully registered customer: Customer(id=17244157, name=Guy, surname=Smith, password=$2a$10$KsvVAwU2/XJ423a7D.51/OZi0B77vfIQheZE8AZ0xuOvmDHSK52J., phoneNumber=1234567890, email=guy2@gmail.com, role=USER, birthday=1900-01-01, createdAt=2024-08-23, modifiedAt=2024-08-23, customerAddresses=[])
+2024-08-23 15:37:58 [http-nio-8080-exec-10] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-10] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-4] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-4] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-11] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-11] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-8] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-8] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-6] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 15:37:58 [http-nio-8080-exec-6] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 16:24:58 [http-nio-8080-exec-1] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 16:24:58 [http-nio-8080-exec-1] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
+2024-08-23 16:29:51 [http-nio-8080-exec-4] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
+2024-08-23 16:29:51 [http-nio-8080-exec-4] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com

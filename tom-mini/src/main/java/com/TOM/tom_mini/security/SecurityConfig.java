@@ -1,5 +1,6 @@
-package com.TOM.tom_mini.crm.security;
+package com.TOM.tom_mini.security;
 
+import com.TOM.tom_mini.filters.LoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -29,9 +31,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x -> x
-                        .requestMatchers("/api/customer/public/**", "/api/accounts/**", "/api/transactions/**").permitAll()
-                        .requestMatchers("/api/customer/private/**").hasAnyRole("USER")
-                        //.anyRequest().authenticated()
+                        .requestMatchers("/api/customer/public/**", "/api/accounts/**", "/api/transactions/**", "/api/fee/**").permitAll()
+                        //.requestMatchers("/api/customer/private/**").hasAnyRole("USER")
+                        //.requestMatchers("/api/customer/admin/**").hasAnyRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
