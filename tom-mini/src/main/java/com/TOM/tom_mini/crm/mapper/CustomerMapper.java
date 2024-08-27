@@ -2,24 +2,22 @@ package com.TOM.tom_mini.crm.mapper;
 
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-@Component
-public class CustomerMapper {
+@Mapper
+public interface CustomerMapper {
 
-    public CustomerInfoResponse mapToCustomerInfoResponse(Customer customer) {
-        return CustomerInfoResponse.builder()
-                .name(customer.getName())
-                .surname(customer.getSurname())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .role(customer.getRole().toString())
-                .birthday(customer.getBirthday())
-                .created_at(customer.getCreatedAt())
-                .updated_at(customer.getModifiedAt())
-                .build();
-    }
+    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
+
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "surname", target = "surname")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
+    @Mapping(source = "role", target = "role")
+    @Mapping(source = "birthday", target = "birthday")
+    @Mapping(source = "created_at", target = "created_at")
+    @Mapping(source = "modified_at", target = "modified_at")
+    CustomerInfoResponse customerToCustomerInfoResponse(Customer customer);
 }
-

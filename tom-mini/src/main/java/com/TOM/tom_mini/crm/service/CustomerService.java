@@ -1,13 +1,11 @@
 package com.TOM.tom_mini.crm.service;
 
 import com.TOM.tom_mini.crm.exception.CustomerAlreadyExistsException;
-import com.TOM.tom_mini.crm.other.CustomerAddressId;
 import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.crm.other.Role;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.*;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
-import com.TOM.tom_mini.crm.repository.CustomerAddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import jakarta.transaction.Transactional;
@@ -25,15 +23,13 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
-    private final CustomerAddressRepository customerAddressRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository,
-                           CustomerAddressRepository addressAddressRepository, PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
-        this.customerAddressRepository = addressAddressRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -56,26 +52,18 @@ public class CustomerService {
                 .birthday(request.getBirthday())
                 .email(email)
                 .role(Role.valueOf("USER"))
-                .createdAt(LocalDate.now())
-                .modifiedAt(LocalDate.now())
+                .created_at(LocalDate.now())
+                .modified_at(LocalDate.now())
                 .build();
 
         customer = customerRepository.save(customer);
-        Set<CustomerAddress> customerAddresses = new HashSet<>();
+        Set<Address> Addresses = new HashSet<>();
 
         for (Address address : request.getAddresses()) {
+            address.setCustomer(customer);
             addressRepository.save(address);
-
-            CustomerAddress customerAddress = new CustomerAddress(new CustomerAddressId(
-                    customer.getId(),
-                    address.getId()),
-                    customer,
-                    address);
-            customerAddressRepository.save(customerAddress);
-
-            //customerAddresses.add(customerAddress);
         }
-        customer.setCustomerAddresses(customerAddresses);
+        customer.setCustomerAddresses(Addresses);
         log.debug("Customer registration details: {}", request);
         return customer;
     }
@@ -94,18 +82,4 @@ public class CustomerService {
         log.info("Fetching customer with Email: {}", email);
         return customerRepository.findByEmail(email);
     }
-
-    private CustomerInfoResponse mapToCustomerInfoResponse(Customer customer) {
-        return CustomerInfoResponse.builder()
-                .name(customer.getName())
-                .surname(customer.getSurname())
-                .email(customer.getEmail())
-                .phoneNumber(customer.getPhoneNumber())
-                .role(customer.getRole().toString()) // Assuming role is an Enum
-                .birthday(customer.getBirthday())
-                .created_at(customer.getCreatedAt())
-                .updated_at(customer.getModifiedAt())
-                .build();
-    }
-
 }

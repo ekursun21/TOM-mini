@@ -51,12 +51,12 @@ public class Customer implements UserDetails {
     private LocalDate birthday;
 
     @Column(nullable = false)
-    private LocalDate createdAt;
+    private LocalDate created_at;
 
-    private LocalDate modifiedAt;
+    private LocalDate modified_at;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
-    private Set<CustomerAddress> customerAddresses;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Address> customerAddresses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

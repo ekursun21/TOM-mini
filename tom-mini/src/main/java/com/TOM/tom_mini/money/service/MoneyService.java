@@ -1,5 +1,6 @@
 package com.TOM.tom_mini.money.service;
 
+import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.*;
 import com.TOM.tom_mini.money.mapper.TransactionMapper;
@@ -24,7 +25,7 @@ public class MoneyService {
 
     @Autowired
     public MoneyService(TransactionRepository transactionRepository, AccountRepository accountRepository,
-                         FeeService feeService) {
+                        FeeService feeService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.feeService = feeService;
@@ -50,15 +51,16 @@ public class MoneyService {
         }
 
         Transaction transaction = TransactionMapper.INSTANCE.toTransaction(transactionDTO);
-        transaction.setFromAccount(fromAccount);
-        transaction.setToAccount(toAccount);
+        transaction.setId(IdGenerator.generate());
         transaction.setTransactionTime(LocalDate.now());
+
 
         log.debug("Created transaction object: {}", transaction);
 
         String accountType = fromAccount.getAccountType();
-
         BigDecimal transactionAmount = transactionDTO.getAmount();
+
+
         if (transactionDTO.getTransactionType() == TransactionType.TRANSFER) {
             BigDecimal fee = transactionAmount.compareTo(BigDecimal.valueOf(10000)) > 0
                     ? feeService.getFee("HIGH_VALUE", accountType)

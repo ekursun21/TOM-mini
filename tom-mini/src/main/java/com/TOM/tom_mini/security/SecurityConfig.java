@@ -1,6 +1,5 @@
 package com.TOM.tom_mini.security;
 
-import com.TOM.tom_mini.filters.LoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;

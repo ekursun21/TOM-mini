@@ -11,11 +11,13 @@ public interface TransactionMapper {
 
     TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
-    @Mapping(target = "fromAccount", ignore = true) // We'll set these manually in the service
-    @Mapping(target = "toAccount", ignore = true)   // We'll set these manually in the service
+    @Mapping(source = "fromAccountNo", target = "fromAccount.accountNo")
+    @Mapping(source = "toAccountNo", target = "toAccount.accountNo")
+    @Mapping(source = "transactionDate", target = "transactionTime")
     Transaction toTransaction(TransactionDTO transactionDTO);
 
     @Mapping(source = "fromAccount.accountNo", target = "fromAccountNo")
     @Mapping(source = "toAccount.accountNo", target = "toAccountNo")
+    @Mapping(source = "transactionTime", target = "transactionDate")
     TransactionDTO toTransactionDTO(Transaction transaction);
 }

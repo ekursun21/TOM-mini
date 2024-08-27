@@ -22,7 +22,7 @@ public class Transaction {
 
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id = IdGenerator.generate();
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_account_no")

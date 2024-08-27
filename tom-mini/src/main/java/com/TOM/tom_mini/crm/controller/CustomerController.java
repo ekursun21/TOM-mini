@@ -1,10 +1,10 @@
 package com.TOM.tom_mini.crm.controller;
 
+import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import com.TOM.tom_mini.crm.service.CustomerService;
-import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +21,10 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final CustomerMapper customerMapper;
 
     @Autowired
-    public CustomerController(CustomerService customerService, CustomerMapper customerMapper) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
-        this.customerMapper = customerMapper;
     }
 
     //Test
@@ -55,7 +53,7 @@ public class CustomerController {
         log.info("Received customer registration request: {}", request);
 
         Customer savedCustomer = customerService.registerCustomer(request);
-        CustomerInfoResponse customerInfoResponse = customerMapper.mapToCustomerInfoResponse(savedCustomer);
+        CustomerInfoResponse customerInfoResponse = CustomerMapper.INSTANCE.customerToCustomerInfoResponse(savedCustomer);
 
         log.info("Successfully registered customer: {}", savedCustomer);
 
@@ -71,7 +69,8 @@ public class CustomerController {
             Optional<Customer> customer = customerService.getCustomerById(id);
             if (customer.isPresent()) {
                 log.info("Customer found: {}", customer.get());
-                return new ResponseEntity<>(customerMapper.mapToCustomerInfoResponse(customer.get()), HttpStatus.OK);
+                return new ResponseEntity<>(
+                        CustomerMapper.INSTANCE.customerToCustomerInfoResponse(customer.get()), HttpStatus.OK);
             } else {
                 log.warn("Customer with ID: {} not found", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);

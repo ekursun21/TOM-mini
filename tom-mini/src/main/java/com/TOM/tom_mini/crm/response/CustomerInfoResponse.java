@@ -18,6 +18,6 @@ public class CustomerInfoResponse {
     private String role;
     private LocalDate birthday;
     private LocalDate created_at;
-    private LocalDate updated_at;
+    private LocalDate modified_at;
 
 }

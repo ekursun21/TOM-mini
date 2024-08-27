@@ -1,8 +1,0 @@
-2024-08-26 09:06:17 [http-nio-8080-exec-1] INFO  c.T.t.c.s.CustomerDetailsServiceImpl - Loading user by username: emre.kursun@tom.com
-2024-08-26 09:06:17 [http-nio-8080-exec-1] INFO  c.T.t.crm.service.CustomerService - Fetching customer with Email: emre.kursun@tom.com
-2024-08-26 09:06:18 [http-nio-8080-exec-1] INFO  c.T.t.c.c.CustomerController - Fetching all customers
-2024-08-26 09:06:18 [http-nio-8080-exec-1] INFO  c.T.t.crm.service.CustomerService - Fetching all customers from the database
-2024-08-26 09:06:18 [http-nio-8080-exec-1] INFO  c.T.t.c.c.CustomerController - Found 7 customers
-2024-08-26 09:09:32 [http-nio-8080-exec-1] INFO  c.T.t.c.c.CustomerController - Received customer registration request: com.TOM.tom_mini.crm.request.CustomerRegistrationRequest@72c312f8
-2024-08-26 09:13:27 [http-nio-8080-exec-5] INFO  c.T.t.c.c.CustomerController - Received customer registration request: com.TOM.tom_mini.crm.request.CustomerRegistrationRequest@1f68ecf1
-2024-08-26 10:12:54 [http-nio-8080-exec-2] INFO  c.T.t.c.c.CustomerController - Received customer registration request: com.TOM.tom_mini.crm.request.CustomerRegistrationRequest@4ae00449

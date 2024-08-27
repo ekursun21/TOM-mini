@@ -5,7 +5,6 @@ import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.other.Role;
 import com.TOM.tom_mini.crm.repository.AddressRepository;
-import com.TOM.tom_mini.crm.repository.CustomerAddressRepository;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
 import com.TOM.tom_mini.crm.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;

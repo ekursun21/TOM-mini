@@ -23,12 +23,10 @@ public class MoneyController {
 
     @PostMapping("/create")
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO transactionDTO) {
-        try {
+
             Transaction transaction = moneyService.processTransaction(transactionDTO);
             return new ResponseEntity<>(transaction, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 
     @GetMapping("/account/{accountNo}")

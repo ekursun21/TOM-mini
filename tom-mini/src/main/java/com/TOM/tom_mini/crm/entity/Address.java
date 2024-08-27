@@ -26,6 +26,7 @@ public class Address {
     private String building;
     private String addressLine;
 
-    @OneToMany(mappedBy = "address")
-    private Set<CustomerAddress> customerAddresses;
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 }
