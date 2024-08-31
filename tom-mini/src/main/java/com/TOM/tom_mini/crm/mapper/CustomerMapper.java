@@ -1,23 +1,41 @@
 package com.TOM.tom_mini.crm.mapper;
 
 import com.TOM.tom_mini.crm.entity.Customer;
+import com.TOM.tom_mini.crm.other.Role;
+import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
-@Mapper
-public interface CustomerMapper {
+import java.time.LocalDate;
 
-    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
+@Component
+public class CustomerMapper {
 
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "surname", target = "surname")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    @Mapping(source = "role", target = "role")
-    @Mapping(source = "birthday", target = "birthday")
-    @Mapping(source = "created_at", target = "created_at")
-    @Mapping(source = "modified_at", target = "modified_at")
-    CustomerInfoResponse customerToCustomerInfoResponse(Customer customer);
+    public CustomerInfoResponse customerToCustomerInfoResponse(Customer customer) {
+
+        return CustomerInfoResponse.builder()
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .role(String.valueOf(customer.getRole()))
+                .birthday(customer.getBirthday())
+                .created_at(customer.getCreated_at())
+                .modified_at(customer.getModified_at())
+                .build();
+    }
+
+    public Customer customerRegistrationRequestToCustomer (CustomerRegistrationRequest customerRegistrationRequest){
+            return Customer.builder()
+                    .name(customerRegistrationRequest.getName())
+                    .surname(customerRegistrationRequest.getSurname())
+                    .email(customerRegistrationRequest.getEmail())
+                    .phoneNumber(customerRegistrationRequest.getPhoneNumber())
+                    .role(Role.USER)
+                    .birthday(customerRegistrationRequest.getBirthday())
+                    .created_at(LocalDate.now())
+                    .modified_at(LocalDate.now())
+                    .build();
+        }
+
 }

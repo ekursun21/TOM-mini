@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -35,10 +36,10 @@ public class Account {
     private LocalDate createdAt;
 
     @OneToMany(mappedBy = "fromAccount")
-    private Set<Transaction> outgoingTransactions;
+    private Set<Transaction> outgoingTransactions = new HashSet<>();
 
     @OneToMany(mappedBy = "toAccount")
-    private Set<Transaction> incomingTransactions;
+    private Set<Transaction> incomingTransactions = new HashSet<>();
 
     public void credit(BigDecimal amount) {
         this.balance = this.balance.add(amount);

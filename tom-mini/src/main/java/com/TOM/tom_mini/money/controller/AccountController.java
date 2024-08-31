@@ -3,6 +3,7 @@ package com.TOM.tom_mini.money.controller;
 import com.TOM.tom_mini.money.dto.AccountDTO;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.Account;
+import com.TOM.tom_mini.money.request.AccountCreateRequest;
 import com.TOM.tom_mini.money.request.MonthlyTransactionRequest;
 import com.TOM.tom_mini.money.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +27,18 @@ public class AccountController {
     }
 
     @PostMapping("/create-account")
-    public ResponseEntity<Account> createAccount(@RequestBody AccountDTO accountDTO) {
-        log.info("Received request to create account for customer ID: {}", accountDTO.getCustomerId());
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountCreateRequest request) {
+        log.info("Received request to create account for customer ID: {}", request.getCustomerId());
         try {
-            Account newAccount = accountService.createAccount(accountDTO);
-            log.info("Account created successfully with account number: {}", newAccount.getAccountNo());
-            return new ResponseEntity<>(newAccount, HttpStatus.CREATED);
+            AccountDTO newAccountDTO = accountService.createAccount(request);
+            return new ResponseEntity<>(newAccountDTO, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error("Error occurred while creating account for customer ID: {}", accountDTO.getCustomerId(), e);
+            log.error("Error occurred while creating account for customer ID: {}", request.getCustomerId(), e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/get")
+    @PostMapping("/monthly")
     public ResponseEntity<List<TransactionDTO>> getMonthlyTransactions(
             @RequestBody MonthlyTransactionRequest request) {
 
@@ -55,10 +55,10 @@ public class AccountController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Account>> getAllAccounts() {
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         log.info("Received request to fetch all accounts");
         try {
-            List<Account> accounts = accountService.getAllAccounts();
+            List<AccountDTO> accounts = accountService.getAllAccounts();
             log.info("Successfully retrieved {} accounts", accounts.size());
             return new ResponseEntity<>(accounts, HttpStatus.OK);
         } catch (Exception e) {

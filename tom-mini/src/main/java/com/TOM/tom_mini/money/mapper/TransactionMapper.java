@@ -1,23 +1,43 @@
 package com.TOM.tom_mini.money.mapper;
 
+import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.Transaction;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import com.TOM.tom_mini.money.entity.TransactionType;
+import com.TOM.tom_mini.money.request.TransactionCreateRequest;
+import com.TOM.tom_mini.money.service.AccountService;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.stereotype.Component;
 
-@Mapper
-public interface TransactionMapper {
+import java.time.LocalDate;
 
-    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
+@Component
+public class TransactionMapper {
 
-    @Mapping(source = "fromAccountNo", target = "fromAccount.accountNo")
-    @Mapping(source = "toAccountNo", target = "toAccount.accountNo")
-    @Mapping(source = "transactionDate", target = "transactionTime")
-    Transaction toTransaction(TransactionDTO transactionDTO);
+    public Transaction transactionCreateRequestToTransaction(TransactionCreateRequest request){
+        Transaction.TransactionBuilder transactionBuilder = Transaction.builder()
+                .id(IdGenerator.generate())
+                .transactionType(request.getTransactionType())
+                .amount(request.getAmount())
+                .description(request.getDescription())
+                .transactionTime(LocalDate.now());
 
-    @Mapping(source = "fromAccount.accountNo", target = "fromAccountNo")
-    @Mapping(source = "toAccount.accountNo", target = "toAccountNo")
-    @Mapping(source = "transactionTime", target = "transactionDate")
-    TransactionDTO toTransactionDTO(Transaction transaction);
+        return transactionBuilder.build();
+    }
+
+    public TransactionDTO transactionToTransactionDTO(Transaction transaction){
+        TransactionDTO.TransactionDTOBuilder dtoBuilder = TransactionDTO.builder()
+                .fromAccountNo(transaction.getFromAccount().getAccountNo())
+                .description(transaction.getDescription())
+                .amount(transaction.getAmount())
+                .transactionDate(transaction.getTransactionTime())
+                .transactionType(transaction.getTransactionType());
+
+        if (transaction.getToAccount() != null) {
+            dtoBuilder.toAccountNo(transaction.getToAccount().getAccountNo());
+        }
+
+        return dtoBuilder.build();
+    }
 }
+

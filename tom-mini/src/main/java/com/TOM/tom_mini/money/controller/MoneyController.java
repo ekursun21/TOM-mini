@@ -2,6 +2,7 @@ package com.TOM.tom_mini.money.controller;
 
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.Transaction;
+import com.TOM.tom_mini.money.request.TransactionCreateRequest;
 import com.TOM.tom_mini.money.service.MoneyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,15 @@ public class MoneyController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO transactionDTO) {
-
-            Transaction transaction = moneyService.processTransaction(transactionDTO);
-            return new ResponseEntity<>(transaction, HttpStatus.CREATED);
-
+    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody TransactionCreateRequest request) {
+            TransactionDTO transactionDto = moneyService.processTransaction(request);
+            return new ResponseEntity<>(transactionDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/account/{accountNo}")
-    public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable String accountNo) {
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable String accountNo) {
         try {
-            List<Transaction> transactions = moneyService.getTransactionsForAccount(accountNo);
+            List<TransactionDTO> transactions = moneyService.getTransactionsForAccount(accountNo);
             if (transactions.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

@@ -52,10 +52,9 @@ public class CustomerController {
     public ResponseEntity<CustomerInfoResponse> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
         log.info("Received customer registration request: {}", request);
 
-        Customer savedCustomer = customerService.registerCustomer(request);
-        CustomerInfoResponse customerInfoResponse = CustomerMapper.INSTANCE.customerToCustomerInfoResponse(savedCustomer);
+        CustomerInfoResponse customerInfoResponse = customerService.registerCustomer(request);
 
-        log.info("Successfully registered customer: {}", savedCustomer);
+        log.info("Successfully registered customer: {}", customerInfoResponse);
 
         return new ResponseEntity<>(customerInfoResponse, HttpStatus.CREATED);
     }
@@ -66,11 +65,11 @@ public class CustomerController {
     public ResponseEntity<CustomerInfoResponse> getCustomerById(@PathVariable Long id) {
         log.info("Fetching customer with ID: {}", id);
         try {
-            Optional<Customer> customer = customerService.getCustomerById(id);
-            if (customer.isPresent()) {
-                log.info("Customer found: {}", customer.get());
+            Optional<CustomerInfoResponse> response = customerService.getCustomerResponseById(id);
+            if (response.isPresent()) {
+                log.info("Customer found: {}", response.get());
                 return new ResponseEntity<>(
-                        CustomerMapper.INSTANCE.customerToCustomerInfoResponse(customer.get()), HttpStatus.OK);
+                        response.get(), HttpStatus.OK);
             } else {
                 log.warn("Customer with ID: {} not found", id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -83,10 +82,10 @@ public class CustomerController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<Customer>> getAllCustomers() {
+    public ResponseEntity<List<CustomerInfoResponse>> getAllCustomers() {
         log.info("Fetching all customers");
         try {
-            List<Customer> customers = customerService.getAllCustomers();
+            List<CustomerInfoResponse> customers = customerService.getAllCustomers();
             log.info("Found {} customers", customers.size());
             return new ResponseEntity<>(customers, HttpStatus.OK);
         } catch (Exception e) {

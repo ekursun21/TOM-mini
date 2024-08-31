@@ -1,6 +1,7 @@
 package com.TOM.tom_mini.crm.service;
 
 import com.TOM.tom_mini.crm.exception.CustomerAlreadyExistsException;
+import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.crm.other.Role;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,17 +26,19 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CustomerMapper customerMapper;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.passwordEncoder = passwordEncoder;
+        this.customerMapper = customerMapper;
     }
 
     @Transactional
-    public Customer registerCustomer(CustomerRegistrationRequest request) {
+    public CustomerInfoResponse registerCustomer(CustomerRegistrationRequest request) {
         String email = request.getEmail();
         Optional<Customer> existingCustomer = customerRepository.findByEmail(email);
         if (existingCustomer.isPresent()) {
@@ -65,12 +69,21 @@ public class CustomerService {
         }
         customer.setCustomerAddresses(Addresses);
         log.debug("Customer registration details: {}", request);
-        return customer;
+        return customerMapper.customerToCustomerInfoResponse(customer);
     }
 
-    public List<Customer> getAllCustomers() {
+    public List<CustomerInfoResponse> getAllCustomers() {
         log.info("Fetching all customers from the database");
-        return customerRepository.findAll();
+        List<Customer> customers = customerRepository.findAll();
+        return customers.stream()
+                .map(customerMapper::customerToCustomerInfoResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    public Optional<CustomerInfoResponse> getCustomerResponseById(Long id) {
+        return getCustomerById(id)
+                .map(customerMapper::customerToCustomerInfoResponse);
     }
 
     public Optional<Customer> getCustomerById(Long id) {

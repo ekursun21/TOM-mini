@@ -55,7 +55,7 @@ public class Customer implements UserDetails {
 
     private LocalDate modified_at;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Address> customerAddresses;
 
     @Override

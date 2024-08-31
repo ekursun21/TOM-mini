@@ -31,8 +31,6 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x -> x
                         .requestMatchers("/api/customer/public/**", "/api/accounts/**", "/api/transactions/**", "/api/fee/**").permitAll()
-                        //.requestMatchers("/api/customer/private/**").hasAnyRole("USER")
-                        //.requestMatchers("/api/customer/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

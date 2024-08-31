@@ -5,10 +5,13 @@ import com.TOM.tom_mini.money.dto.AccountDTO;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.Account;
 import com.TOM.tom_mini.money.entity.Transaction;
+import com.TOM.tom_mini.money.mapper.AccountMapper;
+import com.TOM.tom_mini.money.mapper.TransactionMapper;
 import com.TOM.tom_mini.money.repository.AccountRepository;
 import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.repository.CustomerRepository;
 import com.TOM.tom_mini.money.repository.TransactionRepository;
+import com.TOM.tom_mini.money.request.AccountCreateRequest;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,34 +31,33 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
     private final TransactionRepository transactionRepository;
+    private final AccountMapper accountMapper;
+    private final TransactionMapper transactionMapper;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository, TransactionRepository transactionRepository) {
+    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository,
+                          TransactionRepository transactionRepository, AccountMapper accountMapper, TransactionMapper transactionMapper) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.transactionRepository = transactionRepository;
+        this.accountMapper = accountMapper;
+        this.transactionMapper = transactionMapper;
     }
 
     @Transactional
-    public Account createAccount(AccountDTO accountDTO) {
-        log.info("Creating account for customer ID: {}", accountDTO.getCustomerId());
+    public AccountDTO createAccount(AccountCreateRequest request) {
+        log.info("Creating account for customer ID: {}", request.getCustomerId());
 
-        Optional<Customer> customer = customerRepository.findById(accountDTO.getCustomerId());
+        Optional<Customer> customer = customerRepository.findById(request.getCustomerId());
         if (!customer.isPresent()) {
-            log.error("Invalid customer ID: {}", accountDTO.getCustomerId());
+            log.error("Invalid customer ID: {}", request.getCustomerId());
             throw new IllegalArgumentException("Invalid customer ID");
         }
 
-        Account account = new Account();
-        account.setCustomer(customer.get());
-        account.setAccountType(accountDTO.getAccountType());
-        account.setBalance(accountDTO.getBalance() != null ? accountDTO.getBalance() : BigDecimal.ZERO);
-        account.setCreatedAt(LocalDate.now());
-        account.setAccountNo(IdGenerator.generate());
-
-        Account savedAccount = accountRepository.save(account);
+        Account savedAccount = accountRepository.save(accountMapper.accountCreateRequestToAccount(request));
         log.info("Account created successfully with account number: {}", savedAccount.getAccountNo());
-        return savedAccount;
+
+        return accountMapper.accountToAccountDto(savedAccount);
     }
 
     public Account findByAccountNo(Long accountNo) {
@@ -98,11 +100,13 @@ public class AccountService {
         log.info("Account with account number {} deleted successfully", accountNo);
     }
 
-    public List<Account> getAllAccounts() {
+    public List<AccountDTO> getAllAccounts() {
         log.info("Fetching all accounts");
         List<Account> accounts = accountRepository.findAll();
         log.info("Found {} accounts", accounts.size());
-        return accounts;
+        return accounts.stream()
+                .map(accountMapper::accountToAccountDto)
+                .collect(Collectors.toList());
     }
 
     public List<TransactionDTO> getMonthlyTransactions(Long accountNo, int year, int month) {
@@ -121,21 +125,7 @@ public class AccountService {
         log.info("Found {} transactions for account number: {}", transactions.size(), accountNo);
 
         return transactions.stream()
-                .map(this::convertToDto)
+                .map(transactionMapper::transactionToTransactionDTO)
                 .collect(Collectors.toList());
-    }
-
-    private TransactionDTO convertToDto(Transaction transaction) {
-        log.debug("Converting transaction to DTO: {}", transaction);
-        TransactionDTO transactionDTO = TransactionDTO.builder()
-                .amount(transaction.getAmount())
-                .toAccountNo(transaction.getToAccount().getAccountNo())
-                .transactionType(transaction.getTransactionType())
-                .description(transaction.getDescription())
-                .fromAccountNo(transaction.getFromAccount().getAccountNo())
-                .transactionDate(transaction.getTransactionTime())
-                .build();
-        log.debug("TransactionDTO created: {}", transactionDTO);
-        return transactionDTO;
     }
 }

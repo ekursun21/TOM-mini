@@ -4,7 +4,7 @@ import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import com.TOM.tom_mini.crm.service.CustomerService;
-import com.TOM.tom_mini.mapper.CustomerMapper;
+import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class CustomerControllerTest {
         CustomerInfoResponse response = new CustomerInfoResponse();
 
         when(customerService.registerCustomer(request)).thenReturn(customer);
-        when(customerMapper.mapToCustomerInfoResponse(customer)).thenReturn(response);
+        when(customerMapper.customerToCustomerInfoResponse(customer)).thenReturn(response);
 
         // When
         ResponseEntity<CustomerInfoResponse> result = customerController.registerCustomer(request);

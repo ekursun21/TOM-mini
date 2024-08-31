@@ -3,9 +3,13 @@ package com.TOM.tom_mini.money.service;
 import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.*;
+import com.TOM.tom_mini.money.exception.AccountNotFoundException;
+import com.TOM.tom_mini.money.exception.TransactionProcessingException;
 import com.TOM.tom_mini.money.mapper.TransactionMapper;
 import com.TOM.tom_mini.money.repository.AccountRepository;
 import com.TOM.tom_mini.money.repository.TransactionRepository;
+import com.TOM.tom_mini.money.request.TransactionCreateRequest;
+import com.TOM.tom_mini.money.service.processor.TransactionProcessor;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,139 +18,62 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class MoneyService {
 
-    private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private final FeeService feeService;
+    private final TransactionRepository transactionRepository;
+    private final Map<TransactionType, TransactionProcessor> transactionProcessors;
+    private final TransactionMapper transactionMapper;
 
     @Autowired
-    public MoneyService(TransactionRepository transactionRepository, AccountRepository accountRepository,
-                        FeeService feeService) {
-        this.transactionRepository = transactionRepository;
+    public MoneyService(AccountRepository accountRepository,
+                        TransactionRepository transactionRepository,
+                        Map<TransactionType, TransactionProcessor> transactionProcessors,
+                        TransactionMapper transactionMapper) {
         this.accountRepository = accountRepository;
-        this.feeService = feeService;
+        this.transactionRepository = transactionRepository;
+        this.transactionProcessors = transactionProcessors;
+        this.transactionMapper = transactionMapper;
     }
 
     @Transactional
-    public Transaction processTransaction(TransactionDTO transactionDTO) {
-        log.info("Processing transaction: {}", transactionDTO);
+    public TransactionDTO processTransaction(TransactionCreateRequest request) {
+        log.info("Processing transaction: {}", request);
 
-        Account fromAccount = accountRepository.findById(transactionDTO.getFromAccountNo())
+        Account fromAccount = accountRepository.findById(request.getFromAccountNo())
                 .orElseThrow(() -> {
-                    log.error("From account not found: {}", transactionDTO.getFromAccountNo());
-                    return new IllegalArgumentException("From account not found");
+                    log.error("From account not found: {}", request.getFromAccountNo());
+                    return new AccountNotFoundException(request.getFromAccountNo());
                 });
 
-        Account toAccount = null;
-        if (transactionDTO.getToAccountNo() != null) {
-            toAccount = accountRepository.findById(transactionDTO.getToAccountNo())
-                    .orElseThrow(() -> {
-                        log.error("To account not found: {}", transactionDTO.getToAccountNo());
-                        return new IllegalArgumentException("To account not found");
-                    });
+        Transaction transaction = transactionMapper.transactionCreateRequestToTransaction(request);
+        transaction.setFromAccount(accountRepository.findByAccountNo(request.getFromAccountNo())
+                .orElseThrow(() -> new AccountNotFoundException(request.getFromAccountNo())));
+        transaction.setFromAccount(accountRepository.findByAccountNo(request.getFromAccountNo())
+                .orElseThrow(() -> new AccountNotFoundException(request.getFromAccountNo())));
+
+        TransactionProcessor processor = transactionProcessors.get(request.getTransactionType());
+        if (processor == null) {
+            throw new TransactionProcessingException("No processor found for transaction type: " + request.getTransactionType());
         }
 
-        Transaction transaction = TransactionMapper.INSTANCE.toTransaction(transactionDTO);
-        transaction.setId(IdGenerator.generate());
-        transaction.setTransactionTime(LocalDate.now());
-
-
-        log.debug("Created transaction object: {}", transaction);
-
-        String accountType = fromAccount.getAccountType();
-        BigDecimal transactionAmount = transactionDTO.getAmount();
-
-
-        if (transactionDTO.getTransactionType() == TransactionType.TRANSFER) {
-            BigDecimal fee = transactionAmount.compareTo(BigDecimal.valueOf(10000)) > 0
-                    ? feeService.getFee("HIGH_VALUE", accountType)
-                    : feeService.getFee("LOW_VALUE", accountType);
-
-            BigDecimal totalAmount = transactionAmount.add(fee);
-
-            if (fromAccount.getBalance().compareTo(totalAmount) < 0) {
-                log.error("Insufficient funds in account: {} for transaction amount: {}", fromAccount.getAccountNo(), totalAmount);
-                throw new IllegalArgumentException("Insufficient funds");
-            }
-
-            log.info("Processing transfer with fee. From account: {}, To account: {}, Amount: {}, Fee: {}",
-                    fromAccount.getAccountNo(), toAccount != null ? toAccount.getAccountNo() : "N/A", transactionAmount, fee);
-
-            Account vaultAccount = getBankVaultAccount();
-
-            fromAccount.debit(totalAmount);
-            if (toAccount != null) {
-                toAccount.credit(transactionAmount);
-            }
-            vaultAccount.credit(fee);
-
-            accountRepository.save(fromAccount);
-            if (toAccount != null) {
-                accountRepository.save(toAccount);
-            }
-            accountRepository.save(vaultAccount);
-        } else {
-            adjustAccountBalances(fromAccount, toAccount, transactionAmount, transactionDTO.getTransactionType());
-        }
+        processor.process(transaction);
 
         transactionRepository.save(transaction);
-        log.info("Transaction processed successfully: {}", transaction);
-        return transaction;
+        log.info("Transaction processed successfully with ID: {}", transaction.getId());
+
+        return transactionMapper.transactionToTransactionDTO(transaction);
     }
 
-    private Account getBankVaultAccount() {
-        log.info("Fetching bank's vault account");
-        return accountRepository.findByAccountType("Vault")
-                .orElseThrow(() -> {
-                    log.error("Bank's vault account not found");
-                    return new IllegalStateException("Bank's vault account not found");
-                });
-    }
-
-    private void adjustAccountBalances(Account fromAccount, Account toAccount, BigDecimal amount, TransactionType transactionType) {
-        log.info("Adjusting account balances. Transaction type: {}", transactionType);
-        switch (transactionType) {
-            case DEPOSIT:
-                log.info("Depositing amount: {} to account: {}", amount, fromAccount.getAccountNo());
-                fromAccount.credit(amount);
-                break;
-            case WITHDRAWAL:
-                log.info("Withdrawing amount: {} from account: {}", amount, fromAccount.getAccountNo());
-                if (fromAccount.getBalance().compareTo(amount) < 0) {
-                    log.error("Insufficient funds in account: {}", fromAccount.getAccountNo());
-                    throw new IllegalArgumentException("Insufficient funds");
-                }
-                fromAccount.debit(amount);
-                break;
-            case TRANSFER:
-                log.info("Transferring amount: {} from account: {} to account: {}", amount, fromAccount.getAccountNo(), toAccount.getAccountNo());
-                if (fromAccount.getBalance().compareTo(amount) < 0) {
-                    log.error("Insufficient funds in account: {}", fromAccount.getAccountNo());
-                    throw new IllegalArgumentException("Insufficient funds");
-                }
-                fromAccount.debit(amount);
-                toAccount.credit(amount);
-                break;
-            default:
-                log.error("Unexpected transaction type: {}", transactionType);
-                throw new IllegalStateException("Unexpected transaction type: " + transactionType);
-        }
-
-        accountRepository.save(fromAccount);
-        if (toAccount != null) {
-            accountRepository.save(toAccount);
-        }
-        log.info("Account balances adjusted successfully.");
-    }
-
-    public List<Transaction> getTransactionsForAccount(String accountNo) {
+    public List<TransactionDTO> getTransactionsForAccount(String accountNo) {
         log.info("Fetching transactions for account: {}", accountNo);
         List<Transaction> transactions = transactionRepository.findAll(); // Simplified for example
         log.info("Found {} transactions for account: {}", transactions.size(), accountNo);
-        return transactions;
+        return transactions.stream().map(transactionMapper::transactionToTransactionDTO).collect(Collectors.toList());
     }
 }
