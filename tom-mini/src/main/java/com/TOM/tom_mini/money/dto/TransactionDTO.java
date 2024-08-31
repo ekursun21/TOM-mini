@@ -5,7 +5,6 @@ import java.time.LocalDate;
 
 import com.TOM.tom_mini.money.entity.TransactionType;
 import lombok.*;
-import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 @Getter
 @Setter

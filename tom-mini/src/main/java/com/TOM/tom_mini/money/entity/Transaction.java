@@ -1,6 +1,5 @@
 package com.TOM.tom_mini.money.entity;
 
-import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;

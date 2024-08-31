@@ -1,8 +1,6 @@
 package com.TOM.tom_mini.crm.controller;
 
-import com.TOM.tom_mini.crm.mapper.CustomerMapper;
 import com.TOM.tom_mini.crm.request.CustomerRegistrationRequest;
-import com.TOM.tom_mini.crm.entity.Customer;
 import com.TOM.tom_mini.crm.response.CustomerInfoResponse;
 import com.TOM.tom_mini.crm.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;

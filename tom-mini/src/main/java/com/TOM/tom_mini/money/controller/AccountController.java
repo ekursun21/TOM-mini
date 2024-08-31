@@ -2,7 +2,6 @@ package com.TOM.tom_mini.money.controller;
 
 import com.TOM.tom_mini.money.dto.AccountDTO;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
-import com.TOM.tom_mini.money.entity.Account;
 import com.TOM.tom_mini.money.request.AccountCreateRequest;
 import com.TOM.tom_mini.money.request.MonthlyTransactionRequest;
 import com.TOM.tom_mini.money.service.AccountService;

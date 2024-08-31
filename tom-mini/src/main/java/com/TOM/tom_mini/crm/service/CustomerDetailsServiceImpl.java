@@ -1,7 +1,6 @@
 package com.TOM.tom_mini.crm.service;
 
 import com.TOM.tom_mini.crm.entity.Customer;
-import com.TOM.tom_mini.crm.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

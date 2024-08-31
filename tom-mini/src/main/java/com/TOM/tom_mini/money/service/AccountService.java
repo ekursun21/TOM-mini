@@ -1,6 +1,5 @@
 package com.TOM.tom_mini.money.service;
 
-import com.TOM.tom_mini.crm.other.IdGenerator;
 import com.TOM.tom_mini.money.dto.AccountDTO;
 import com.TOM.tom_mini.money.dto.TransactionDTO;
 import com.TOM.tom_mini.money.entity.Account;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

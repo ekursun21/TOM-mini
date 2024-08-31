@@ -1,7 +1,6 @@
 package com.TOM.tom_mini.money.controller;
 
 import com.TOM.tom_mini.money.dto.TransactionDTO;
-import com.TOM.tom_mini.money.entity.Transaction;
 import com.TOM.tom_mini.money.request.TransactionCreateRequest;
 import com.TOM.tom_mini.money.service.MoneyService;
 import org.springframework.beans.factory.annotation.Autowired;
